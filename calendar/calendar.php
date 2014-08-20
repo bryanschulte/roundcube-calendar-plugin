@@ -1125,6 +1125,7 @@ class calendar extends rcube_plugin
    */
   function ical_feed_export()
   {
+    // BS 8/17/14: disabling the http auth + user check ... we want the feed links to be publicly shareable
     /*// process HTTP auth info
     if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
       $_POST['_user'] = $_SERVER['PHP_AUTH_USER']; // used for rcmail::autoselect_host()
