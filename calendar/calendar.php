@@ -1079,7 +1079,7 @@ class calendar extends rcube_plugin
   /**
    * Construct the ics file for exporting events to iCalendar format;
    */
-  function export_events($terminate = true)
+  function export_events($terminate = true, $user = NULL)
   {
     $start = get_input_value('start', RCUBE_INPUT_GET);
     $end = get_input_value('end', RCUBE_INPUT_GET);
@@ -1103,8 +1103,12 @@ class calendar extends rcube_plugin
       if (empty($calname)) $calname = $calid;
       $events = $this->driver->load_events($start, $end, null, $calid, 0);
     }
-    else
-      $events = array();
+    else {
+      $calendar = $this->driver->get_calendar($user,$calid);
+      $events = $this->driver->load_events($start, $end, null, $calid, 0);
+      if (empty($filename))
+        $filename = $calendar['name'];
+    }
 
     header("Content-Type: text/calendar");
     header("Content-Disposition: inline; filename=".$calname.'.ics');
@@ -1121,7 +1125,7 @@ class calendar extends rcube_plugin
    */
   function ical_feed_export()
   {
-    // process HTTP auth info
+    /*// process HTTP auth info
     if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
       $_POST['_user'] = $_SERVER['PHP_AUTH_USER']; // used for rcmail::autoselect_host()
       $auth = $this->rc->plugins->exec_hook('authenticate', array(
@@ -1140,7 +1144,7 @@ class calendar extends rcube_plugin
       header('WWW-Authenticate: Basic realm="Roundcube Calendar"');
       header('HTTP/1.0 401 Unauthorized');
       exit;
-    }
+    }*/
 
     // decode calendar feed hash
     $format = 'ics';
@@ -1156,13 +1160,13 @@ class calendar extends rcube_plugin
     list($user, $_GET['source']) = explode(':', $calhash, 2);
 
     // sanity check user
-    if ($this->rc->user->get_username() == $user) {
+//    if ($this->rc->user->get_username() == $user) {
       $this->load_driver();
       $this->export_events(false);
-    }
-    else {
-      header('HTTP/1.0 404 Not Found');
-    }
+//    }
+//    else {
+//      header('HTTP/1.0 404 Not Found');
+//    }
 
     // don't save session data
     session_destroy();

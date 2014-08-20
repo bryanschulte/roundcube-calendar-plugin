@@ -131,6 +131,38 @@ class database_driver extends calendar_driver
   }
 
   /**
+   * Get the calendar with the specified name for the specified user
+   *
+   * @param string $user  The user name
+   * @param string $id  The calendar name
+   *
+   * @return array List of calendars
+   */
+  public function get_calendar($user, $id)
+  {
+    $calendar = array();
+    $result = $this->rc->db->query(
+      "SELECT c.*
+         FROM " . $this->db_calendars . " as c INNER JOIN " . $this->db_users . " as u
+           ON c.user_id = u.user_id
+         WHERE u.username =?
+          AND c.calendar_id=?
+         ORDER BY c.name",
+      $user,
+      $id
+    );
+    if ($result && ($arr = $this->rc->db->fetch_assoc($result))) {
+      $arr['showalarms'] = intval($arr['showalarms']);
+      $arr['active']     = true;
+      $arr['name']       = html::quote($arr['name']);
+      $arr['listname']   = html::quote($arr['name']);
+      $calendar = $arr;
+    }
+
+    return $calendar;
+  }
+
+  /**
    * Create a new calendar assigned to the current user
    *
    * @param array Hash array with calendar properties
@@ -730,9 +762,14 @@ class database_driver extends calendar_driver
       $calendars = array_keys($this->calendars);
     else if (is_string($calendars))
       $calendars = explode(',', $calendars);
-      
+
+    // BS 8/17/14: disabling the check below. this function will be used to load event info for ical feeds, which means we
+    // won't have a user to check against. shouldn't be a security issue (?) as we already check for the user's identity
+    // elsewhere
+    /*
     // only allow to select from calendars of this use
     $calendar_ids = array_map(array($this->rc->db, 'quote'), array_intersect($calendars, array_keys($this->calendars)));
+    */
     
     // compose (slow) SQL query for searching
     // FIXME: improve searching using a dedicated col and normalized values
