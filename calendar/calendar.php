@@ -1094,8 +1094,11 @@ class calendar extends rcube_plugin
 
     $attachments = get_input_value('attachments', RCUBE_INPUT_GET);
     $calid = $calname = get_input_value('source', RCUBE_INPUT_GET);
+    $calendars = array();
 
-    $calendars = $this->driver->list_calendars();
+    if ($user=NULL) {
+      $calendars = $this->driver->list_calendars();
+    }
 
     if ($calendars[$calid]) {
       $calname = $calendars[$calid]['name'] ? $calendars[$calid]['name'] : $calid;
@@ -1125,7 +1128,7 @@ class calendar extends rcube_plugin
    */
   function ical_feed_export()
   {
-    // BS 8/17/14: disabling the http auth + user check ... we want the feed links to be publicly shareable
+    // BS 8/17/14: disabling the user check - ical feeds should be publicly accessible
     /*// process HTTP auth info
     if (!empty($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
       $_POST['_user'] = $_SERVER['PHP_AUTH_USER']; // used for rcmail::autoselect_host()
@@ -1163,7 +1166,7 @@ class calendar extends rcube_plugin
     // sanity check user
 //    if ($this->rc->user->get_username() == $user) {
       $this->load_driver();
-      $this->export_events(false);
+      $this->export_events(false, $user);
 //    }
 //    else {
 //      header('HTTP/1.0 404 Not Found');

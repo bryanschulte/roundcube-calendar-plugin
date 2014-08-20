@@ -110,14 +110,14 @@ abstract class calendar_driver
   abstract function list_calendars($active = false, $personal = false);
 
     /**
-     * Get the calendar with the specified id for the specified user
+     * Get the calendar with the specified id
      *
      * @param string $user  The user name
      * @param string $id  The calendar id
      *
      * @return array List of calendars
      */
-    abstract function get_calendar($user, $id);
+    abstract function get_calendar($user,$id);
 
   /**
    * Create a new calendar assigned to the current user

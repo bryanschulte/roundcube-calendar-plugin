@@ -45,6 +45,7 @@ class database_driver extends calendar_driver
   private $sensitivity_map = array('public' => 0, 'private' => 1, 'confidential' => 2);
   private $server_timezone;
   
+  private $db_users = 'users';
   private $db_events = 'events';
   private $db_calendars = 'calendars';
   private $db_attachments = 'attachments';
@@ -131,7 +132,7 @@ class database_driver extends calendar_driver
   }
 
   /**
-   * Get the calendar with the specified name for the specified user
+   * Get the specified calendar
    *
    * @param string $user  The user name
    * @param string $id  The calendar name
