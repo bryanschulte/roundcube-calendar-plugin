@@ -771,6 +771,7 @@ class database_driver extends calendar_driver
     // only allow to select from calendars of this use
     $calendar_ids = array_map(array($this->rc->db, 'quote'), array_intersect($calendars, array_keys($this->calendars)));
     */
+    $calendar_ids = $calendars;
     
     // compose (slow) SQL query for searching
     // FIXME: improve searching using a dedicated col and normalized values
